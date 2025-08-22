@@ -1,62 +1,124 @@
-import React, { useState } from 'react';
-import { FaSearch, FaBell, FaChevronDown, FaPlus, FaPen, FaChevronRight,FaTrash, FaSave, FaTimes } from 'react-icons/fa';
+import React, { useState,useEffect } from 'react';
+import { FaSearch, FaBell, FaChevronDown, FaPlus, FaPen, FaChevronLeft,FaChevronRight,FaTrash, FaSave, FaTimes } from 'react-icons/fa';
 import gmailScreenshot from '../assets/gmail_screenshot.png'
 import './styles/WorkflowInterface.css';   // ✅ import CSS file
 const WorkflowCapture = () => {
-    const [editingStepId, setEditingStepId] = useState(null);
-const [editValues, setEditValues] = useState({
-  description: "",
-  extra: "",
-  screenshot: ""
-});
 
-// Start editing a step
-const startEditing = (step) => {
-  setEditingStepId(step.id);
-  setEditValues({
-    description: step.description || "",
-    extra: step.extra || "",
-    screenshot: step.screenshot || ""
+  const [editingStepId, setEditingStepId] = useState(null);
+  const [activeTab, setActiveTab] = useState("Documentation"); // default
+  const [showScreenshotDialog, setShowScreenshotDialog] = useState(false);
+  const [screenshotInput, setScreenshotInput] = useState("");
+
+      // Add new state at the top
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const handleAddStep = (position) => {
+    const newStep = {
+      id: steps.length + 1,   // temporary, reindexed below
+      description: "New Step"
+    };
+
+    const updatedSteps = [...steps];
+
+    if (position === "before") {
+      updatedSteps.splice(currentStepIndex, 0, newStep);
+    } else {
+      updatedSteps.splice(currentStepIndex + 1, 0, newStep);
+      setCurrentStepIndex(currentStepIndex + 1);
+      
+    }
+
+    // Reassign IDs sequentially after insertion
+    updatedSteps.forEach((step, idx) => {
+      step.id = idx + 1;
+    });
+
+    setSteps(updatedSteps);
+    setShowDropdown(false); // close dropdown
+    
+  };
+
+
+  const goToPrevStep = () => {
+    // Save current edits
+    setSteps(prevSteps =>
+      prevSteps.map((s, idx) =>
+        idx === currentStepIndex ? { ...s, description: tourTitle, extra: tourExtra } : s
+      )
+    );
+    setCurrentStepIndex((prev) => Math.max(prev - 1, 0));
+  };
+    
+  // Add this function inside your component
+  const deleteScreenshot = (index) => {
+    const updatedSteps = steps.map((step, idx) =>
+      idx === index ? { ...step, screenshot: "" } : step
+    );
+    setSteps(updatedSteps);
+  };
+
+  const goToNextStep = () => {
+    setSteps(prevSteps =>
+      prevSteps.map((s, idx) =>
+        idx === currentStepIndex ? { ...s, description: tourTitle, extra: tourExtra } : s
+      )
+    );
+    setCurrentStepIndex((prev) => Math.min(prev + 1, steps.length - 1));
+  };
+
+  const [editValues, setEditValues] = useState({
+    description: "",
+    extra: "",
+    screenshot: ""
   });
-};
 
-// Save step updates
-const saveStep = () => {
-  const updatedSteps = steps.map((s) =>
-    s.id === editingStepId
-      ? { ...s, ...editValues } // merge edited values
-      : s
-  );
-  setSteps(updatedSteps);
-  setEditingStepId(null);
-};
+  // Start editing a step
+  const startEditing = (step) => {
+    setEditingStepId(step.id);
+    setEditValues({
+      description: step.description || "",
+      extra: step.extra || "",
+      screenshot: step.screenshot || ""
+    });
+  };
 
-// Cancel editing
-const cancelEditing = () => {
-  setEditingStepId(null);
-  setEditValues({ description: "", extra: "", screenshot: "" });
-};
+  // Save step updates
+  const saveStep = () => {
+    const updatedSteps = steps.map((s) =>
+      s.id === editingStepId
+        ? { ...s, ...editValues } // merge edited values
+        : s
+    );
+    setSteps(updatedSteps);
+    setEditingStepId(null);
+  };
 
-const [isEditing, setIsEditing] = useState(false);
-const [currentStep, setCurrentStep] = useState(null);
-const [editDescription, setEditDescription] = useState("");
+  // Cancel editing
+  const cancelEditing = () => {
+    setEditingStepId(null);
+    setEditValues({ description: "", extra: "", screenshot: "" });
+  };
 
-// Open edit modal with existing values
-const handleEdit = (step) => {
-  setCurrentStep(step);
-  setEditDescription(step.description); // ✅ pre-fill input with existing value
-  setIsEditing(true);
-};
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentStep, setCurrentStep] = useState(null);
+  const [editDescription, setEditDescription] = useState("");
 
-// Save updated value
-const handleSave = () => {
-  setSteps(steps.map(s =>
-    s.id === currentStep.id ? { ...s, description: editDescription } : s
-  ));
-  setIsEditing(false);
-  setCurrentStep(null);
-  setEditDescription("");
-};
+  // Open edit modal with existing values
+  const handleEdit = (step) => {
+    setCurrentStep(step);
+    setEditDescription(step.description); // ✅ pre-fill input with existing value
+    setIsEditing(true);
+  };
+
+  // Save updated value
+  const handleSave = () => {
+    setSteps(steps.map(s =>
+      s.id === currentStep.id ? { ...s, description: editDescription } : s
+    ));
+    setIsEditing(false);
+    setCurrentStep(null);
+    setEditDescription("");
+  };
 
   const [steps, setSteps] = useState([
     {
@@ -79,17 +141,24 @@ const handleSave = () => {
         circleY: "40%",
     }
   ]);
+  const [tourTitle, setTourTitle] = useState(steps[currentStepIndex]?.description || "");
+  const [tourExtra, setTourExtra] = useState(steps[currentStepIndex]?.extra || "");
+  useEffect(() => {
+    setTourTitle(steps[currentStepIndex]?.description || "");
+    setTourExtra(steps[currentStepIndex]?.extra || "");
+  }, [currentStepIndex, steps]);
+
   const addStepAt = (index) => {
-    const newSteps = [...steps];
+  const newSteps = [...steps];
   
     // Insert new step ABOVE the given index
-    newSteps.splice(index, 0, {
-      id: 0, // temporary, will be re-assigned
-      description: "New Step"
-    });
+  newSteps.splice(index, 0, {
+    id: 0, // temporary, will be re-assigned
+    description: "New Step"
+  });
   
     // Reassign step IDs sequentially
-    const reindexedSteps = newSteps.map((step, idx) => ({
+  const reindexedSteps = newSteps.map((step, idx) => ({
       ...step,
       id: idx + 1
     }));
@@ -97,15 +166,23 @@ const handleSave = () => {
     setSteps(reindexedSteps);
   };
   const deleteStep = (index) => {
-    const newSteps = steps.filter((_, idx) => idx !== index);
+  const newSteps = steps.filter((_, idx) => idx !== index);
   
     // Reassign IDs
-    const reindexedSteps = newSteps.map((step, idx) => ({
+  const reindexedSteps = newSteps.map((step, idx) => ({
       ...step,
       id: idx + 1
     }));
   
     setSteps(reindexedSteps);
+  
+    // ✅ Fix: Clamp currentStepIndex if out of bounds
+    setCurrentStepIndex((prevIndex) => {
+      if (prevIndex >= reindexedSteps.length) {
+        return Math.max(reindexedSteps.length - 1, 0);
+      }
+      return prevIndex;
+    });
   };
   
   return (
@@ -157,8 +234,25 @@ const handleSave = () => {
       {/* Header */}
       <div className="content-header">
         <h2>Capture 2025-08-20 → T19:00</h2>
-        <button className="more-options">...</button>
+        {/* Header with Tabs */}
+        <div className="tab-switcher">
+            <div className={`tab-slider ${activeTab === "Product Tour" ? "right" : "left"}`} />
+            <button 
+              className={`tab-btn ${activeTab === "Documentation" ? "active" : ""}`}
+              onClick={() => setActiveTab("Documentation")}
+            >
+              Documentation
+            </button>
+            <button 
+              className={`tab-btn ${activeTab === "Product Tour" ? "active" : ""}`}
+              onClick={() => setActiveTab("Product Tour")}
+            >
+              Product Tour
+            </button>
+          </div>
+    
       </div>
+      {activeTab === "Documentation" ? (
       <div className="workflow-steps">
       {steps.map((step, index) => (
   <div key={step.id} className="step-wrapper">
@@ -312,6 +406,182 @@ const handleSave = () => {
         </button>
       </div>
       </div>
+      )
+      :
+      (
+      <>
+      {showScreenshotDialog && (
+  <div className="modal-overlay">
+    <div className="modal-box">
+      <h3>Add Screenshot</h3>
+
+      {/* URL Input */}
+      <input
+        type="text"
+        placeholder="Enter image URL"
+        value={screenshotInput}
+        onChange={(e) => setScreenshotInput(e.target.value)}
+        className="modal-input"
+      />
+
+      {/* File Upload */}
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setScreenshotInput(reader.result);
+            };
+            reader.readAsDataURL(file);
+          }
+        }}
+      />
+
+      {/* Actions */}
+      <div className="modal-actions">
+        <button 
+          className="btn btn-primary"
+          onClick={() => {
+            const updatedSteps = steps.map((step, idx) =>
+              idx === currentStepIndex ? { ...step, screenshot: screenshotInput } : step
+            );
+            setSteps(updatedSteps);
+            setScreenshotInput("");
+            setShowScreenshotDialog(false);
+          }}
+        >
+          Confirm
+        </button>
+        <button 
+          className="btn btn-secondary"
+          onClick={() => {
+            setScreenshotInput("");
+            setShowScreenshotDialog(false);
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+      <div className="action-header">
+        <button className="btn btn-outline">Export</button>
+        <button className="btn btn-primary">Deploy</button>
+      </div>
+    
+      <div className="content-body">
+        {/* Left side - Step Preview */}
+        {/* Left side - Step Preview */}
+<div className="left-panel">
+
+  {steps[currentStepIndex]?.screenshot ? (
+    <>
+      
+    <div className="screenshot-box relative">
+    
+
+      {/* Blinking circle if coordinates exist */}
+      {steps[currentStepIndex].circleX && steps[currentStepIndex].circleY && (
+        <div
+          className="outer-circle"
+          style={{
+            top: steps[currentStepIndex].circleY || "26%",
+            left: steps[currentStepIndex].circleX || "12%",
+            transform: "translate(-50%, -50%)"
+          }}
+        >
+          <div className="inner-circle"></div>
+        </div>
+      )}
+
+      <img
+        src={steps[currentStepIndex].screenshot}
+        alt={`Step ${steps[currentStepIndex].id} screenshot`}
+        className="screenshot-img"
+      />
+      <div className="screenshot-actions">
+        <button
+          className="delete-btn"
+          onClick={() => deleteScreenshot(currentStepIndex)}
+        >
+          <FaTrash />
+        </button>
+      </div>
+    </div>
+    </>
+    
+  ) : (
+    <div className="screenshot-placeholder">
+      <button className="add-screenshot-btn" onClick={() => setShowScreenshotDialog(true)}>+</button>
+    </div>
+  )}
+  
+  {/* Step Navigation */}
+  <div className="step-navigation">
+    <button className="nav-btn" onClick={goToPrevStep} disabled={currentStepIndex === 0}>
+      <FaChevronLeft />
+    </button>
+    <span className="step-counter">
+      Step {currentStepIndex + 1} of {steps.length}
+    </span>
+    <button
+      className="nav-btn"
+      onClick={goToNextStep}
+      disabled={currentStepIndex === steps.length - 1}
+    >
+      <FaChevronRight />
+    </button>
+  </div>
+</div>
+
+    
+        {/* Right side form fields */}
+        <div className="right-panel">
+          <div className="input-box">
+          <input 
+      type="text" 
+      placeholder="Sample Title"
+      value={tourTitle}
+      onChange={(e) => setTourTitle(e.target.value)}
+    />
+          </div>
+    
+          <div className="textarea-box">
+          <textarea 
+      placeholder="Add a description (optional)"
+      value={tourExtra}
+      onChange={(e) => setTourExtra(e.target.value)}
+    />
+          </div>
+    
+          <div className="form-actions">
+  <div className="dropdown">
+    <button className="btn btn-dark" onClick={() => setShowDropdown(!showDropdown)}>
+      <FaPlus style={{ verticalAlign: 'middle', marginTop: '0px', fontSize: "10px" }} /> 
+      <span> Add Step </span>  
+      <FaChevronDown style={{ verticalAlign: 'middle', marginTop: '1px' }} />
+    </button>
+
+    {showDropdown && (
+      <div className="dropdown-menu">
+        <button onClick={() => handleAddStep("before")} className="dropdown-item">Add Before this Step</button>
+        <button onClick={() => handleAddStep("after")} className="dropdown-item">Add After this Step</button>
+      </div>
+    )}
+  </div>
+  <button className="btn btn-danger" onClick={() => deleteStep(currentStepIndex)}>Delete Step</button>
+</div>
+
+        </div>
+      </div>
+    </>
+    
+      )}
       </div>
       
   </div>
