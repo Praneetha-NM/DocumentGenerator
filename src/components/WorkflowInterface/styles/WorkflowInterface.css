@@ -1,0 +1,465 @@
+.app {
+    display: flex;
+    height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  
+  /* SIDEBAR STYLES */
+  .sidebar {
+    width: 300px;
+    background-color: #111827; /* gray-900 */
+    color: white;
+    padding: 0; /* remove inner padding */
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  
+  .sidebar-icon {
+    color: grey;
+  }
+  /* HEADER */
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+  }
+  
+  .user-avatar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #f97316; /* orange-500 */
+    color: white;
+    border-radius: 8px; /* smoother like screenshot */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  /* SEARCH BOX */
+  .search-container {
+    padding: 0 16px;
+    margin-bottom: 16px;
+  }
+  
+  .search-box {
+    background-color: #1f2937; /* gray-800 */
+    border-radius: 8px;
+    border: grey 0.5px solid;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .search-box input {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 100%;
+    outline: none;
+    font-size: 14px;
+  }
+  
+  /* SECTION HEADERS */
+  .sidebar-section {
+    margin-bottom: 16px;
+    padding: 0 16px;
+  }
+  .sidebar-title {
+    text-align: left;
+  }
+  
+  .sidebar-section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #9ca3af; /* gray-400 */
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  
+  /* MENUS */
+  .sidebar-menu h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d1d5db; /* gray-300 */
+    margin-bottom: 16px;
+  }
+  
+  .with-dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* MENU ITEMS */
+  .menu-item {
+    padding: 8px 22px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 14px;
+    color: #d1d5db; /* gray-300 */
+  }
+  
+  .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  .menu-item.active {
+    margin-top: 10px;
+    margin-left: 12px;
+    background-color: #f97316; /* orange-500 */
+    color: white;
+    font-weight: 500;
+    padding-left: 8px;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 16px 24px;
+    overflow-y: auto;
+    background-color: white;
+  }
+  
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 24px;
+  }
+  
+  .content-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #121212;
+  }
+  
+  .more-options {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .step-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .step-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .step-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+  
+  .number-title {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 15px; /* spacing between number and title */
+  }
+  .step-number {
+    width: 28px;
+    height: 28px;
+    background-color: #f97316;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+    margin-top: 10px;
+  }
+  
+  .step-description {
+    font-size: 16px;
+    font-weight: 500;
+    color: #121212;
+  }
+  
+  .step-extra {
+    font-size: 14px;
+    color: #555;
+    margin-top: 4px;
+    margin-left: 45px;
+    line-height: 1.4;
+    text-align: left;
+  }
+  
+  .edit-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+  }
+  .edit-btn:hover {
+    color: #111827;
+  }
+  .add-step-btn {
+    width: 28px;
+    height: 28px;
+    background-color: #f97316;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    align-self: center;
+  }
+  
+  .add-step-btn.final {
+    margin-top: 8px;
+  }
+  
+  .screenshot-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .screenshot {
+    width: 80%;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    position: relative; /* 👈 makes it the anchor */
+    overflow: visible; /* 👈 allows circles to show */
+  }
+  
+  .screenshot img {
+    width: 100%;
+    display: block;
+  }
+  .separator {
+    position: relative;
+    width: 100%;
+    height: 1px;
+    background-color: #eee; /* line color */
+    margin: 20px 0; /* spacing between lines */
+  }
+  
+  .separator .add-step-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #f97316;
+    font-weight: 200;
+    color: white;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  @keyframes pulse-outer {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 0.4; }
+  }
+  
+  @keyframes pulse-inner {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+  
+  .outer-circle {
+    position: absolute;
+    z-index: 50;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 3px solid rgba(249, 115, 22, 1); /* solid bright orange */
+    animation: pulse-outer 1.8s infinite ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .inner-circle {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #f97316 0%, #fb923c 100%);
+    opacity: 0.6; /* ✅ make it fully visible */
+    animation: pulse-inner 1.8s infinite ease-in-out;
+  }
+  .step-actions {
+    display: flex;
+    flex-direction: row; /* stack edit & delete */
+    gap: 6px;
+    align-items: center;
+  }
+  
+  .delete-btn {
+    background: none;
+    border: none;
+    color: #888; /* red */
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .delete-btn:hover {
+    color: #b91c1c; /* darker red */
+  }
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .edit-header {
+    display: flex;
+    align-items: flex-start; /* 👈 aligns number + inputs top */
+    gap: 12px;
+    width: 100%;
+  }
+  .content {
+    width: 100%;
+    padding-right: 20px;
+    gap: 10px;
+    flex: 1; /* 👈 makes inputs align next to number */
+    display: flex;
+    flex-direction: column;
+  }
+  .step-number {
+    background: #f97316;
+    color: white;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  
+  .edit-input,
+  .edit-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .edit-textarea {
+    height: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  .edit-input::placeholder,
+  .edit-textarea::placeholder {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #9ca3af; /* gray-400 */
+  }
+  
+  .edit-input:focus,
+  .edit-textarea:focus {
+    border: #f97316 3px solid;
+  }
+  
+  .edit-textarea {
+    height: 80px; /* reduce height */
+    resize: vertical; /* let user resize only up/down */
+  }
+  
+  .form-actions {
+    display: flex;
+    flex-direction: flex-end;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  
+  .save-btn,
+  .cancel-btn {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .save-btn {
+    background-color: #f97316;
+    color: white;
+    border: none;
+  }
+  
+  .save-btn:hover {
+    background-color: #ea580c;
+  }
+  
+  .cancel-btn {
+    background-color: #111827;
+    color: white;
+    border: none;
+  }
+  
+  .cancel-btn:hover {
+    background-color: #1f2937;
+  }
+  .screenshot-inputs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .screenshot-inputs .edit-input {
+    flex: 2; /* URL input takes more space */
+  }
+  
+  .screenshot-inputs .file-input {
+    flex: 1;
+    padding: 6px;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
