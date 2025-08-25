@@ -15,7 +15,10 @@ import {
   FaFileAlt,
   FaRegFolder,
   FaRegFile,
-} from "react-icons/fa"
+  
+} from "react-icons/fa";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+
 import "./styles/WorkflowInterface.css";
 import gmailScreenshot from '../assets/gmail_screenshot.png';
 
@@ -216,7 +219,7 @@ const WorkflowCapture = () => {
             {!isCollapsed && <FaChevronDown />}
           </div>
           <div className="notification" onClick={toggleSidebar}>
-            {isCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
+            {isCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20}/>}
           </div>
         </div>
 
