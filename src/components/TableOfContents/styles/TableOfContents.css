@@ -1,0 +1,94 @@
+.toc-container {
+    position: fixed;
+    top: 84px;
+    height: calc(100% - 84px); /* fill rest of screen */
+    right: 0;        /* stick to the right side */
+    height: 100%;
+    z-index: 900;    /* make sure it sits above content */
+    display: flex;
+    background-color: white;
+  }
+  
+  
+  .toc-toggle-icon {
+    top: 0px;
+    right: 0px;
+    left: -25px;
+    cursor: pointer;
+    z-index: 10;
+    color: white;
+    background-color:#111827;
+    width:25px;
+    height:30px;
+    border-radius:50%;
+    display: flex; /* centers icon/text */
+    align-items: center;
+    justify-content: center;
+    margin-top:5px;
+    padding-left: 3px;
+
+  /* Instead of full circle */
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+  }
+  
+  .toc-content {
+    width: 250px;
+    background-color: white;
+    padding: 20px 0;
+    
+    height: 100%;
+    overflow-y: auto;
+    border-left: 1px solid #eaeaea;
+    padding-top: 30px; /* Add padding to push content below the toggle icon */
+  }
+  
+  .toc-header {
+    display: flex;
+    align-items: center;
+    padding: 0 20px 15px 20px;
+    margin-bottom: 10px;
+  }
+  
+  .toc-icon {
+    color: #6b7280;
+    font-size: 10px;
+    margin-right: 10px;
+  }
+  
+  .toc-title {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  
+  .toc-list {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+  }
+  
+  .toc-item {
+    padding: 12px 20px;
+    color: #6b7280;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    font-size: 14px;
+  }
+  
+  .toc-item:hover {
+    background-color: #f9fafb;
+    color: #111827;
+  }
+  
+  .toc-item.active {
+    color: #111827;
+    font-weight: 500;
+  }
+  

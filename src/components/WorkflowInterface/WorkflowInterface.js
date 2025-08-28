@@ -17,12 +17,15 @@ import {
   FaRegFile,
   FaTimesCircle,
   FaPlusCircle, 
+  FaChrome,
+  FaAngleDoubleLeft,
+  FaAngleDoubleRight
 } from "react-icons/fa";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 import "./styles/WorkflowInterface.css";
 import gmailScreenshot from '../assets/gmail_screenshot.png';
-
+import TableOfContents from "../TableOfContents/TableOfContents";
 const WorkflowCapture = () => {
   const [editingStepId, setEditingStepId] = useState(null)
   const [activeTab, setActiveTab] = useState("Documentation")
@@ -390,9 +393,51 @@ const handleScreenshotUpload = (screenshotUrl) => {
     });
     setSteps(updatedSteps);
   };
+  const [isTocVisible, setIsTocVisible] = useState(false);
+  const [showMenu,setShowMenu]=useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const stepElements = steps.map((_, i) =>
+      document.getElementById(`step-${i}`)
+    );
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the one closest to the top of container
+        const topMost = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+
+        if (topMost) {
+          const idx = stepElements.indexOf(topMost.target);
+          if (idx !== -1 && idx !== currentStepIndex) {
+            setCurrentStepIndex(idx);
+          }
+        }
+      },
+      {
+        root: container,   // 👈 scroll within workflow-steps
+        threshold: 0.1,    // trigger when at least 10% visible
+      }
+    );
+
+    stepElements.forEach((el) => el && observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [steps, setCurrentStepIndex, currentStepIndex]);
+
   return (
     <div className="app">
       <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+      {isCollapsed &&
+          <div onClick={toggleSidebar} style={{marginTop:'20px',marginBottom:'10px'}}>
+            <FaAngleDoubleRight size={20} />
+          </div>
+        }
         <div className="sidebar-header">
           <div className="user-avatar">
             <div className="avatar">J</div>
@@ -400,7 +445,7 @@ const handleScreenshotUpload = (screenshotUrl) => {
             {!isCollapsed && <FaChevronDown />}
           </div>
           <div className="notification" onClick={toggleSidebar}>
-            {isCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20}/>}
+            {isCollapsed ? <FaAngleDoubleLeft size={20} /> : <FaAngleDoubleLeft size={20}/>}
           </div>
         </div>
 
@@ -416,50 +461,54 @@ const handleScreenshotUpload = (screenshotUrl) => {
         </div>
 
         <div className="sidebar-section">
-          {!isCollapsed && <h3 className="sidebar-title">PERSONAL DOCS</h3>}
+          
           <div className="sidebar-menu">
             <div className="folder">
               <FaFolder className="folder-icon" />
               {!isCollapsed && <span className="folder-label">Spaces</span>}
             </div>
+            {!isCollapsed && (
+              <>
             {spaces.map((space) => (
               <div key={space.id} className="menu-item">
                 {space.icon}
-                {!isCollapsed && <span className="menu-name">{space.name}</span>}
-                {!isCollapsed && <FaChevronRight style={{ fontSize: "10px" }} />}
+                <span className="menu-name">{space.name}</span>
+                <FaChevronRight style={{ fontSize: "10px" }} />
               </div>
-            ))}
+            ))}</>)}
           </div>
         </div>
 
         <div className="sidebar-section">
-          {!isCollapsed && <h3 className="sidebar-title">CHROME EXTENSION</h3>}
+        <div className="folder">
+              <FaChrome className="folder-icon" />
+              {!isCollapsed && <h3 className="sidebar-title">CHROME EXTENSION</h3>}
+            </div>
+          
           <div className="sidebar-menu">
             <div className="folder">
               <FaFileAlt className="folder-icon" />
               {!isCollapsed && <span className="folder-label">Captured Workflows</span>}
             </div>
+            {!isCollapsed && (
+              <>
             {capturedWorkflows.map((workflow) => (
               <div key={workflow.id} className={`menu-item ${workflow.active ? "active" : ""}`}>
                 {workflow.icon}
-                {!isCollapsed && (
+                
                   <span className={`menu-name ${workflow.active ? "active" : ""}`}>{workflow.name}</span>
-                )}
-              </div>
-            ))}
+                  </div>   
+            ))}</>)}
           </div>
         </div>
       </div>
       
       <div className="main-content">
-        {isCollapsed &&
-          <div className="toggle-button" onClick={toggleSidebar}>
-            <PanelLeftOpen size={20} />
-          </div>
-        }
+        
         <div className={`content-holder ${isCollapsed ? "collapsed" : ""}`}>
         <div className="content-header" >
           <h2>Capture 2025-08-20 → T19:00</h2>
+          <div className="header-actions">
           <div className="tab-switcher">
             <div className={`tab-slider ${activeTab === "Product Tour" ? "right" : "left"}`} />
             <button
@@ -475,12 +524,29 @@ const handleScreenshotUpload = (screenshotUrl) => {
               Product Tour
             </button>
           </div>
-        </div>
+          <div className="menu-dots">
+      <button className="dots-btn" onClick={() => setShowMenu((prev) => !prev)}>⋮</button>
+    </div>
 
+    {showMenu && (
+        <div className="dropdown-header">
+          <button className="dropdown-item-header">Export</button>
+          <button
+            className="dropdown-item-header"
+            onClick={() => (window.location.href = "/share")} // ⬅️ redirect
+          >Share</button>
+        </div>
+      )}
+    </div>
+        </div>
+        
         {activeTab === "Documentation" ? (
-          <div className="workflow-steps">
+          
+          <div className="layout-container">
+        <div ref={containerRef} className={`workflow-steps ${isTocVisible ? "with-toc" : ""}`}>
+           
             {steps.map((step, index) => (
-              <div key={step.id} className="step-wrapper">
+              <div key={step.id} id={`step-${index}`}  className="step-wrapper">
                 <div className="separator">
                   <button className="add-step-btn" onClick={() => addStepAt(index)}>
                     <FaPlus />
@@ -666,6 +732,14 @@ const handleScreenshotUpload = (screenshotUrl) => {
                 <FaPlus />
               </button>
             </div>
+          </div>
+          <TableOfContents 
+          isTocVisible={isTocVisible}
+          setIsTocVisible={setIsTocVisible}  
+            steps={steps} 
+            currentStepIndex={currentStepIndex} 
+            setCurrentStepIndex={setCurrentStepIndex} 
+          />
           </div>
         ) : (
           <div className="product-tour-container">
