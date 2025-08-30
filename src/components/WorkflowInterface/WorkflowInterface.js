@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { useSearchParams,useNavigate,useLocation } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import {
   FaSearch,
   FaChevronDown,
@@ -26,14 +28,20 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import "./styles/WorkflowInterface.css";
 import gmailScreenshot from '../assets/gmail_screenshot.png';
 import TableOfContents from "../TableOfContents/TableOfContents";
+
 const WorkflowCapture = () => {
-  const [editingStepId, setEditingStepId] = useState(null)
-  const [activeTab, setActiveTab] = useState("Documentation")
+  const location = useLocation();
+  // 👇 Initial state reads from location.state if available
+  const [activeTab, setActiveTab] = useState(
+    location.state?.activeTab || "Documentation"
+  );
+
   const [showScreenshotDialog, setShowScreenshotDialog] = useState(false)
   const [screenshotInput, setScreenshotInput] = useState("")
   const [isCollapsed, setIsCollapsed] = useState(false)
   const imgRef = useRef(null)
   const [dragging, setDragging] = useState(false)
+  const [showAlert,setShowAlert] =useState(false)
   const [editValues, setEditValues] = useState({
     description: "",
     extra: "",
@@ -41,6 +49,8 @@ const WorkflowCapture = () => {
     circleX: "50%",
     circleY: "50%"
   })
+  const [searchParams] = useSearchParams();
+const stepsParam = searchParams.get("steps");
 
   const handleDrag = (e) => {
     if (!dragging || !imgRef.current) return
@@ -82,29 +92,39 @@ const WorkflowCapture = () => {
   
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [showDropdown, setShowDropdown] = useState(false)
+  const initialSteps = stepsParam
+  ? JSON.parse(decodeURIComponent(stepsParam))
+  : [
+      { id: 1, description: "Click On Gmail" },
+      {
+        id: 2,
+        description: "Click on highlighted element",
+        screenshot: gmailScreenshot,
+        circleX: "12%",
+        circleY: "26%",
+      },
+      {
+        id: 3,
+        description: "Click on the Button",
+        extra:
+          "This action will navigate to the Gmail login page where you can access your email account. The system will automatically detect and highlight interactive elements for the next step in the workflow.",
+        screenshot: gmailScreenshot,
+        circleX: "50%",
+        circleY: "40%",
+      },
+    ];
 
-  const [steps, setSteps] = useState([
-    {
-      id: 1,
-      description: "Click On Gmail",
-    },
-    {
-      id: 2,
-      description: "Click on highlighted element",
-      screenshot: gmailScreenshot,
-      circleX: "12%",
-      circleY: "26%",
-    },
-    {
-      id: 3,
-      description: "Click on the Button",
-      extra:
-        "This action will navigate to the Gmail login page where you can access your email account. The system will automatically detect and highlight interactive elements for the next step in the workflow.",
-      screenshot: gmailScreenshot,
-      circleX: "50%",
-      circleY: "40%",
-    },
-  ])
+    const [editingStepId, setEditingStepId] = useState(null);
+  const [steps, setSteps] = useState(() => {
+    // Load steps from local storage if available
+    const savedSteps = localStorage.getItem("workflowSteps");
+    return savedSteps ? JSON.parse(savedSteps) : initialSteps;
+  });
+  // Effect to save steps to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem("workflowSteps", JSON.stringify(steps));
+  }, [steps]);
+
 
   const handleAddStep = (position) => {
     const newStep = {
@@ -396,7 +416,7 @@ const handleScreenshotUpload = (screenshotUrl) => {
   const [isTocVisible, setIsTocVisible] = useState(false);
   const [showMenu,setShowMenu]=useState(false);
   const containerRef = useRef(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -404,7 +424,7 @@ const handleScreenshotUpload = (screenshotUrl) => {
     const stepElements = steps.map((_, i) =>
       document.getElementById(`step-${i}`)
     );
-
+   
     const observer = new IntersectionObserver(
       (entries) => {
         // Find the one closest to the top of container
@@ -429,9 +449,45 @@ const handleScreenshotUpload = (screenshotUrl) => {
 
     return () => observer.disconnect();
   }, [steps, setCurrentStepIndex, currentStepIndex]);
-
+  const handleShare = () => {
+    const query = encodeURIComponent(JSON.stringify(steps));
+  
+    if (activeTab === "Documentation") {
+      // Redirect to the Documentation Share page
+      navigate(`/share/documentation?steps=${query}`);
+    } else if (activeTab === "Product Tour") {
+      // Validate steps before redirect
+      const allValid = steps.every(
+        (step) =>
+          step.id &&
+          step.description &&
+          step.extra &&
+          step.screenshot  // ensure mandatory fields exist
+      );
+  
+      if (allValid) {
+        navigate(`/share/product-tour?steps=${query}`);
+      } else {
+       setShowAlert(true)
+      }
+    }
+  };
   return (
     <div className="app">
+      {showAlert && (
+  <div className="modal-overlay">
+    <div className="modal-box" style={{padding:'16px 35px'}}>
+    <div className="modal-body">
+        <h3 style={{paddingBottom:'0px'}}>Missing Details</h3>
+        <p className="upload-prompt">⚠️ Every step must have a <b>Title</b>, <b>Description</b>, and <b>Image</b> before sharing.</p>
+        <button className="btn btn-primary" onClick={() => setShowAlert(false)}>
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       {isCollapsed &&
           <div onClick={toggleSidebar} style={{marginTop:'20px',marginBottom:'10px'}}>
@@ -533,7 +589,7 @@ const handleScreenshotUpload = (screenshotUrl) => {
           <button className="dropdown-item-header">Export</button>
           <button
             className="dropdown-item-header"
-            onClick={() => (window.location.href = "/share")} // ⬅️ redirect
+            onClick={handleShare}
           >Share</button>
         </div>
       )}

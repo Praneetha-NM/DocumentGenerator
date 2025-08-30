@@ -1002,11 +1002,11 @@ menu-dots {
 /* The main modal container */
 .modal-box {
   background-color: white;
-  padding: 24px;
+  padding: 16px 24px;
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   width: 90%;
-  max-width: 440px; /* A slightly smaller max-width for a compact look */
+  max-width: 340px; /* A slightly smaller max-width for a compact look */
   display: flex;
   flex-direction: column;
 }
@@ -1018,6 +1018,7 @@ menu-dots {
   color: #1e293b; /* Darker slate color */
   margin: 0;
   padding-bottom: 16px;
+  text-align: center;
 }
 
 /* --- STYLING FOR THE UPLOAD CONTENT AREA --- */
@@ -1033,6 +1034,7 @@ menu-dots {
 .upload-prompt {
   margin-top: 16px; /* Space between button and text */
   font-size: 14px;
+  text-align: center;
   color: #64748b; /* Muted slate color */
 }
 
@@ -1045,7 +1047,7 @@ menu-dots {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   /* --- KEY CHANGE: Increased padding for a heightened look --- */
-  padding: 8px 16px; 
+  padding: 5px 16px; 
 }
 
 /* Primary button style (used for "Choose File" and "Confirm") */
@@ -1059,7 +1061,7 @@ menu-dots {
 }
 
 .btn-primary:disabled {
-  background-color: #ffa564; /* Lighter indigo when disabled */
+  background-color: #ababab; /* Lighter indigo when disabled */
   cursor: not-allowed;
 }
 
@@ -1078,7 +1080,7 @@ menu-dots {
 /* --- ACTION BUTTONS CONTAINER --- */
 .modal-actions {
   display: flex;
-  justify-content: flex-end; /* Aligns buttons to the right */
+  justify-content: center; /* Aligns buttons to the right */
   gap: 12px;
   padding-top: 16px;
 }
